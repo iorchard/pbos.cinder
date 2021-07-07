@@ -1,0 +1,63 @@
+---
+- name: Setup | copy init file
+  ansible.builtin.copy:
+    dest: "{{ item.dest }}"
+    src: "{{ ansible_distribution | lower }}{{ item.dest }}"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  loop: "{{ os_service_init }}"
+  become: true
+
+- name: Setup | template configuration
+  ansible.builtin.template:
+    dest: "{{ item.dest }}"
+    src: "{{ ansible_distribution | lower }}{{ item.dest + '.j2' }}"
+    owner: "root"
+    group: "{{ os_service_name }}"
+    mode: "0640"
+    backup: true
+  loop: "{{ os_service_conf }}"
+  become: true
+  changed_when: true
+  notify:
+    - systemctl restart service
+
+- name: Setup | populate database
+  ansible.builtin.shell: su -s /bin/sh  -c "cinder-manage db sync" cinder
+  become: true
+  delegate_to: "{{ groups['cinder'][0] }}"
+  run_once: true
+
+- name: Setup | get client.cinder ceph keyring
+  ansible.builtin.command: ceph auth get-or-create client.cinder
+  register: client_cinder_keyring
+  become: true
+  delegate_to: "{{ groups['cinder'][0] }}"
+  run_once: true
+
+- name: Setup | copy client.cinder ceph keyring
+  ansible.builtin.copy:
+    content: "{{ client_cinder_keyring.stdout }}\n"
+    dest: "/etc/ceph/ceph.client.cinder.keyring"
+    owner: "{{ os_service_name }}"
+    group: "{{ os_service_name }}"
+    mode: "0600"
+  become: true
+
+- name: Setup | get client.cinder-backup ceph keyring
+  ansible.builtin.command: ceph auth get-or-create client.cinder-backup
+  register: client_cinder_backup_keyring
+  become: true
+  delegate_to: "{{ groups['cinder'][0] }}"
+  run_once: true
+
+- name: Setup | copy client.cinder-backup ceph keyring
+  ansible.builtin.copy:
+    content: "{{ client_cinder_backup_keyring.stdout }}\n"
+    dest: "/etc/ceph/ceph.client.cinder-backup.keyring"
+    owner: "{{ os_service_name }}"
+    group: "{{ os_service_name }}"
+    mode: "0600"
+  become: true
+...

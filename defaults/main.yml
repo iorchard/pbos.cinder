@@ -1,0 +1,18 @@
+---
+openstack_release: "wallaby"
+keepalived_vip: ""
+os_service_name: "cinder"
+db_password: "{{ cinder_password }}"
+os_password: "{{ cinder_password }}"
+rabbitmq_openstack_password: ~
+cinder_port: 8776
+keystone_port: 5000
+glance_port: 9292
+memcached_port: 11211
+rbd_secret: ~
+os_endpoint_interface:
+  - public
+  - internal
+  - admin
+cinder_api_processes: 4
+...

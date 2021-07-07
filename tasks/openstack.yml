@@ -1,0 +1,59 @@
+---
+- name: OpenStack | create user
+  openstack.cloud.identity_user:
+    cloud: pbos
+    name: "{{ os_service_name }}"
+    password: "{{ os_password }}"
+    domain: default
+    default_project: service
+    state: present
+  delegate_to: "{{ groups['keystone'][0] }}"
+  run_once: true
+  no_log: true
+
+- name: OpenStack | add user to admin role
+  openstack.cloud.role_assignment:
+    cloud: pbos
+    user: "{{ os_service_name }}"
+    role: admin
+    project: service
+  delegate_to: "{{ groups['keystone'][0] }}"
+  run_once: true
+
+- name: OpenStack | create service
+  openstack.cloud.catalog_service:
+    cloud: pbos
+    name: "{{ item.name }}"
+    service_type: "{{ item.type }}"
+    description: OpenStack Block Storage Service
+    state: present
+  delegate_to: "{{ groups['keystone'][0] }}"
+  run_once: true
+  loop:
+    - {name: "cinderv2", type: "volumev2"}
+    - {name: "cinderv3", type: "volumev3"}
+
+- name: OpenStack | create endpoints of cinderv2
+  openstack.cloud.endpoint:
+    cloud: pbos
+    service: "cinderv2"
+    endpoint_interface: "{{ item }}"
+    url: "http://{{ keepalived_vip }}:{{ cinder_port }}/v2/%(project_id)s"
+    region: RegionOne
+    state: present
+  loop: "{{ os_endpoint_interface }}"
+  delegate_to: "{{ groups['keystone'][0] }}"
+  run_once: true
+
+- name: OpenStack | create endpoints of cinderv3
+  openstack.cloud.endpoint:
+    cloud: pbos
+    service: "cinderv3"
+    endpoint_interface: "{{ item }}"
+    url: "http://{{ keepalived_vip }}:{{ cinder_port }}/v3/%(project_id)s"
+    region: RegionOne
+    state: present
+  loop: "{{ os_endpoint_interface }}"
+  delegate_to: "{{ groups['keystone'][0] }}"
+  run_once: true
+...

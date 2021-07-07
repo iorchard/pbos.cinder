@@ -1,0 +1,39 @@
+---
+prereq_pkgs:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - openstack-pkg-tools
+
+# osbpo apt repo keyring
+osbpo_keyring:
+  url: "http://osbpo.debian.net/osbpo/dists/pubkey.gpg"
+  file: "/usr/share/keyrings/osbpo-keyring.gpg"
+
+# osbpo apt repo
+osbpo_repos:
+  - repo: "deb [signed-by=/usr/share/keyrings/osbpo-keyring.gpg] http://osbpo.debian.net/osbpo bullseye-{{ openstack_release }}-backports main"
+    filename: "openstack"
+  - repo: "deb [signed-by=/usr/share/keyrings/osbpo-keyring.gpg] http://osbpo.debian.net/osbpo bullseye-{{ openstack_release }}-backports-nochange main"
+    filename: "openstack"
+
+packages:
+  - cinder-api
+  - cinder-scheduler
+  - cinder-backup
+  - cinder-volume
+
+os_service_init:
+  - {dest: "/etc/init.d/cinder-api"}
+
+os_service_conf: 
+  - {dest: "/etc/cinder/cinder.conf"}
+  - {dest: "/etc/cinder/cinder-api-uwsgi.ini"}
+  - {dest: "/etc/cinder/cinder-api-uwsgi-bind.ini"}
+
+os_systemd_service_name:
+  - cinder-api
+  - cinder-scheduler
+  - cinder-backup
+  - cinder-volume
+...
