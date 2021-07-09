@@ -37,6 +37,7 @@ connection = mysql+pymysql://{{ os_service_name }}:{{ db_password }}@{{ keepaliv
 [fc-zone-manager]
 [healthcheck]
 [key_manager]
+backend = barbican
 [keystone_authtoken]
 www_authenticate_uri = http://{{ keepalived_vip }}:{{ keystone_port }}
 auth_url = http://{{ keepalived_vip }}:{{ keystone_port }}
