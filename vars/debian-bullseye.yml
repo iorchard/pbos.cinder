@@ -32,8 +32,8 @@ os_service_conf:
   - {dest: "/etc/cinder/cinder-api-uwsgi-bind.ini"}
 
 os_systemd_service_name:
-  - cinder-api
-  - cinder-scheduler
-  - cinder-backup
-  - cinder-volume
+  - cinder-api.service
+  - cinder-scheduler.service
+  - cinder-backup.service
+  - cinder-volume.service
 ...
