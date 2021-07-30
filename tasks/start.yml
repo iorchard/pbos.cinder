@@ -1,10 +1,14 @@
 ---
 - name: Start | import common tasks
-  tags: cinder
+  tags:
+    - cinder
+    - openstack
   ansible.builtin.import_tasks: "common.yml"
 
 - name: Start | start service
-  tags: cinder
+  tags:
+    - cinder
+    - openstack
   block:
     - name: Start | start service
       ansible.builtin.service:
