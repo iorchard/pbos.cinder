@@ -28,10 +28,11 @@ packages:
 os_service_init:
   - {dest: "/etc/init.d/cinder-api"}
 
+os_conf_dir: "/etc/cinder"
 os_service_conf: 
-  - {dest: "/etc/cinder/cinder.conf"}
-  - {dest: "/etc/cinder/cinder-api-uwsgi.ini"}
-  - {dest: "/etc/cinder/cinder-api-uwsgi-bind.ini"}
+  - {dest: "{{ os_conf_dir }}/cinder.conf"}
+  - {dest: "{{ os_conf_dir }}/cinder-api-uwsgi.ini"}
+  - {dest: "{{ os_conf_dir }}/cinder-api-uwsgi-bind.ini"}
 
 os_systemd_service_name:
   - cinder-api.service
