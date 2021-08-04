@@ -1,0 +1,30 @@
+---
+apt_state: "latest"
+prereq_pkgs:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gpg
+  - openstack-pkg-tools
+
+packages:
+  - cinder-common
+  - cinder-api
+  - cinder-scheduler
+  - cinder-backup
+  - cinder-volume
+  - python3-cinder
+
+os_service_init: []
+
+os_conf_dir: "/etc/cinder"
+os_service_conf: 
+  - {dest: "{{ os_conf_dir }}/cinder.conf"}
+  - {dest: "/etc/apache2/conf-available/cinder-wsgi.conf"}
+
+os_systemd_service_name:
+  - apache2.service
+  - cinder-scheduler.service
+  - cinder-backup.service
+  - cinder-volume.service
+...
