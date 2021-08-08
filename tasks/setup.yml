@@ -71,4 +71,10 @@
     group: "{{ os_service_name }}"
     mode: "0600"
   become: true
+
+- name: Setup | create default volume type
+  ansible.builtin.command: >-
+    openstack volume type create {{ default_volume_type_name }}
+  delegate_to: "{{ groups['controller'][0] }}"
+  run_once: true
 ...
