@@ -15,5 +15,7 @@ os_endpoint_interface:
   - internal
   - admin
 cinder_api_processes: 4
-default_volume_type_name: rbd
+loopback_file: "/pbos.lvm"
+lvm_size: 10G
+lvm_vg_name: "cinder-volume"
 ...

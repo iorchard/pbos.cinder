@@ -6,9 +6,8 @@
     owner: "root"
     group: "root"
     mode: "0755"
-  loop: "{{ os_service_init }}"
   become: true
-  when: ansible_distribution == "Debian"
+  loop: "{{ os_service_init }}"
 
 - name: Setup | template configuration
   ansible.builtin.template:
@@ -22,7 +21,7 @@
   become: true
   changed_when: true
   notify:
-    - systemctl restart service
+    - openstack systemctl restart service
 
 - name: Setup | flush handlers
   ansible.builtin.meta: flush_handlers
@@ -46,6 +45,7 @@
   become: true
   delegate_to: "{{ groups['cinder'][0] }}"
   run_once: true
+  when: '"ceph" in storage_backends'
 
 - name: Setup | copy client.cinder ceph keyring
   ansible.builtin.copy:
@@ -55,6 +55,7 @@
     group: "{{ os_service_name }}"
     mode: "0600"
   become: true
+  when: '"ceph" in storage_backends'
 
 - name: Setup | get client.cinder-backup ceph keyring
   ansible.builtin.command: ceph auth get-or-create client.cinder-backup
@@ -62,6 +63,7 @@
   become: true
   delegate_to: "{{ groups['cinder'][0] }}"
   run_once: true
+  when: '"ceph" in storage_backends'
 
 - name: Setup | copy client.cinder-backup ceph keyring
   ansible.builtin.copy:
@@ -71,4 +73,5 @@
     group: "{{ os_service_name }}"
     mode: "0600"
   become: true
+  when: '"ceph" in storage_backends'
 ...

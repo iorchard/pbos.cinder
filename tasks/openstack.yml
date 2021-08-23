@@ -57,10 +57,7 @@
   delegate_to: "{{ groups['keystone'][0] }}"
   run_once: true
 
-- name: OpenStack | create default volume type
-  ansible.builtin.shell: >-
-    . {{ ansible_env.HOME }}/.adminrc &&
-    openstack volume type create {{ default_volume_type_name }}
-  delegate_to: "{{ groups['controller'][0] }}"
-  run_once: true
+- name: OpenStack | create volume type
+  ansible.builtin.include_tasks: volume_type.yml
+  loop: "{{ storage_backends }}"
 ...

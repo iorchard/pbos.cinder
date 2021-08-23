@@ -1,0 +1,35 @@
+---
+pkg_state: "latest"
+prereq_pkgs:
+  - ca-certificates
+  - curl
+
+packages:
+  - openstack-cinder
+  - python3-cinder
+  - python3-keystone
+
+lvm_packages:
+  - lvm2
+  - device-mapper-persistent-data
+  - targetcli
+
+openstack_repo_rpm: "https://www.rdoproject.org/repos/rdo-release.el8.rpm"
+
+mariadb_service_socket: "/var/lib/mysql/mysql.sock"
+
+os_service_init: []
+
+os_conf_dir: "/etc/cinder"
+os_service_conf: 
+  - {dest: "{{ os_conf_dir }}/cinder.conf"}
+
+os_systemd_service_name:
+  - openstack-cinder-api.service
+  - openstack-cinder-scheduler.service
+  - openstack-cinder-backup.service
+  - openstack-cinder-volume.service
+
+lvm_systemd_service_name:
+  - target.service
+...

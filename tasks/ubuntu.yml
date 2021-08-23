@@ -6,17 +6,15 @@
   become: true
 
 - name: Ubuntu | Install prerequisite packages
-  ansible.builtin.apt:
+  ansible.builtin.package:
     name: "{{ item }}"
-    state: "{{ apt_state }}"
-    update_cache: true
-    allow_unauthenticated: false
-  loop: "{{ prereq_pkgs }}"
-  become: true
-  register: _apt
-  until: not _apt.failed
+    state: "{{ pkg_state }}"
+  register: _pkg
+  until: not _pkg.failed
   retries: 3
   delay: 3
+  become: true
+  loop: "{{ prereq_pkgs }}"
 
 - name: Ubuntu | add openstack repository
   ansible.builtin.command: >-
@@ -24,15 +22,13 @@
   become: true
 
 - name: Ubuntu | Install packages
-  ansible.builtin.apt:
+  ansible.builtin.package:
     name: "{{ item }}"
-    state: "{{ apt_state }}"
-    update_cache: true
-    allow_unauthenticated: false
-  become: true
-  loop: "{{ packages }}"
-  register: _apt
-  until: not _apt.failed
+    state: "{{ pkg_state }}"
+  register: _pkg
+  until: not _pkg.failed
   retries: 3
   delay: 3
+  become: true
+  loop: "{{ packages }}"
 ...

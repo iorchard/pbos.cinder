@@ -1,5 +1,5 @@
 ---
-- name: systemctl restart service
+- name: openstack systemctl restart service
   service:
     name: "{{ item }}"
     state: "restarted"
@@ -11,4 +11,17 @@
   become: true
   changed_when: false
   loop: "{{ os_systemd_service_name }}"
+
+- name: lvm systemctl restart service
+  service:
+    name: "{{ item }}"
+    state: "restarted"
+    enabled: true
+  register: _restart_service
+  until: _restart_service.state == "started"
+  retries: 3
+  delay: 3
+  become: true
+  changed_when: false
+  loop: "{{ lvm_systemd_service_name }}"
 ...

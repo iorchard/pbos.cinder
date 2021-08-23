@@ -1,0 +1,48 @@
+---
+- name: LVM | create loopback file
+  ansible.builtin.command: >-
+    dd if=/dev/zero of={{ loopback_file }} bs=1 count=0 seek={{ lvm_size }}
+  become: true
+
+- name: LVM | check loopback device is already assigned
+  ansible.builtin.command: >-
+    losetup --associated {{ loopback_file }}
+  become: true
+  register: _check
+
+- name: LVM | create loopback device
+  ansible.builtin.command: >-
+    losetup --find --show {{ loopback_file }}
+  become: true
+  register: _losetup
+  when: _check.stdout == ""
+
+# /dev/loop0: [2049]:45674 (/pbos.lvm)
+- name: LVM | create volume group for existing loopback
+  community.general.lvg:
+    vg: "{{ lvm_vg_name }}"
+    pvs: "{{ _check.stdout | regex_search('^/dev/loop[0-9]+') }}"
+  become: true
+  when: _check.stdout != ""
+
+- name: LVM | create volume group for new loopback
+  community.general.lvg:
+    vg: "{{ lvm_vg_name }}"
+    pvs: "{{ _losetup.stdout }}"
+  become: true
+  when: _check.stdout == ""
+
+- name: LVM | copy lvm configuration
+  ansible.builtin.copy:
+    dest: "{{ item }}"
+    src: "{{ ansible_os_family | lower }}{{ item }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  become: true
+  changed_when: true
+  loop:
+    - "/etc/lvm/lvm.conf"
+  notify:
+    - lvm systemctl restart service
+...
