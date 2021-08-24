@@ -1,4 +1,12 @@
 ---
+- name: OpenStack | check if keystone service is opened
+  ansible.builtin.uri:
+    url: "http://{{ keepalived_vip }}:{{ keystone_port }}/v3"
+  register: _uri
+  until: _uri.status == 200
+  retries: 5
+  delay: 10
+
 - name: OpenStack | create user
   openstack.cloud.identity_user:
     cloud: pbos
