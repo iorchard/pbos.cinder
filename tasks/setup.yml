@@ -23,6 +23,12 @@
   notify:
     - openstack systemctl restart service
 
+- name: Setup | populate database
+  ansible.builtin.shell: su -s /bin/sh  -c "cinder-manage db sync" cinder
+  become: true
+  delegate_to: "{{ groups['cinder'][0] }}"
+  run_once: true
+
 - name: Setup | flush handlers
   ansible.builtin.meta: flush_handlers
 
@@ -33,45 +39,7 @@
   become: true
   when: ansible_distribution == "Ubuntu"
 
-- name: Setup | populate database
-  ansible.builtin.shell: su -s /bin/sh  -c "cinder-manage db sync" cinder
-  become: true
-  delegate_to: "{{ groups['cinder'][0] }}"
-  run_once: true
-
-- name: Setup | get client.cinder ceph keyring
-  ansible.builtin.command: ceph auth get-or-create client.cinder
-  register: client_cinder_keyring
-  become: true
-  delegate_to: "{{ groups['cinder'][0] }}"
-  run_once: true
-  when: '"ceph" in storage_backends'
-
-- name: Setup | copy client.cinder ceph keyring
-  ansible.builtin.copy:
-    content: "{{ client_cinder_keyring.stdout }}\n"
-    dest: "/etc/ceph/ceph.client.cinder.keyring"
-    owner: "{{ os_service_name }}"
-    group: "{{ os_service_name }}"
-    mode: "0600"
-  become: true
-  when: '"ceph" in storage_backends'
-
-- name: Setup | get client.cinder-backup ceph keyring
-  ansible.builtin.command: ceph auth get-or-create client.cinder-backup
-  register: client_cinder_backup_keyring
-  become: true
-  delegate_to: "{{ groups['cinder'][0] }}"
-  run_once: true
-  when: '"ceph" in storage_backends'
-
-- name: Setup | copy client.cinder-backup ceph keyring
-  ansible.builtin.copy:
-    content: "{{ client_cinder_backup_keyring.stdout }}\n"
-    dest: "/etc/ceph/ceph.client.cinder-backup.keyring"
-    owner: "{{ os_service_name }}"
-    group: "{{ os_service_name }}"
-    mode: "0600"
-  become: true
+- name: Setup | include ceph cinder keyring task
+  ansible.builtin.include_tasks: ceph_cinder_keyring.yml
   when: '"ceph" in storage_backends'
 ...
