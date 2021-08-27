@@ -10,9 +10,9 @@
   ansible.builtin.copy:
     content: "{{ client_cinder_keyring.stdout }}\n"
     dest: "/etc/ceph/ceph.client.cinder.keyring"
-    owner: "{{ os_service_name }}"
-    group: "{{ os_service_name }}"
-    mode: "0600"
+    owner: "cinder"
+    group: "nova"
+    mode: "0640"
   become: true
 
 - name: Setup | get client.cinder-backup ceph keyring
