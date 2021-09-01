@@ -6,12 +6,19 @@
   delegate_to: "{{ groups['cinder'][0] }}"
   run_once: true
 
+- name: Setup | check if nova user exists
+  ansible.builtin.user:
+    name: nova
+  check_mode: true
+  register: is_nova
+  become: true
+
 - name: Setup | copy client.cinder ceph keyring
   ansible.builtin.copy:
     content: "{{ client_cinder_keyring.stdout }}\n"
     dest: "/etc/ceph/ceph.client.cinder.keyring"
-    owner: "cinder"
-    group: "nova"
+    owner: "{{ os_service_name }}"
+    group: "{{ is_nova.changed | ternary('cinder', 'nova') }}"
     mode: "0640"
   become: true
 
