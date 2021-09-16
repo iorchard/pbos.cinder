@@ -23,6 +23,10 @@
   notify:
     - openstack systemctl restart service
 
+- name: Setup | include ceph cinder keyring task
+  ansible.builtin.include_tasks: ceph_cinder_keyring.yml
+  when: '"ceph" in storage_backends'
+
 - name: Setup | populate database
   ansible.builtin.shell: su -s /bin/sh  -c "cinder-manage db sync" cinder
   become: true
@@ -38,8 +42,4 @@
     state: "started"
   become: true
   when: ansible_distribution == "Ubuntu"
-
-- name: Setup | include ceph cinder keyring task
-  ansible.builtin.include_tasks: ceph_cinder_keyring.yml
-  when: '"ceph" in storage_backends'
 ...
