@@ -6,7 +6,7 @@ glance_api_version = 2
 enabled_backends = {{ storage_backends | join(',') }}
 default_volume_type = {{ storage_backends[0] }}
 my_ip = {{ ansible_host }}
-transport_url = rabbit://openstack:{{ rabbitmq_openstack_password }}@{{ keepalived_vip }}
+transport_url = rabbit://openstack:{{ rabbitmq_openstack_password }}@{{ keepalived_vip }}:{{ rabbitmq_tls_port }}
 {% if "ceph" in storage_backends %}
 backup_driver = cinder.backup.drivers.ceph.CephBackupDriver
 backup_ceph_conf = /etc/ceph/ceph.conf
@@ -46,7 +46,7 @@ target_helper = lioadm
 [coordination]
 [cors]
 [database]
-connection = mysql+pymysql://{{ os_service_name }}:{{ db_password }}@{{ keepalived_vip }}/cinder
+connection = mysql+pymysql://{{ os_service_name }}:{{ db_password }}@{{ keepalived_vip }}/{{ os_service_name }}?charset=utf8&ssl_ca={{ mariadb_ca_cert }}
 [fc-zone-manager]
 [healthcheck]
 [key_manager]
@@ -68,6 +68,9 @@ lock_path = /var/lib/cinder/tmp
 [oslo_messaging_kafka]
 [oslo_messaging_notifications]
 [oslo_messaging_rabbit]
+ssl=true
+ssl_version=TLSv1_2
+ssl_ca_file={{ rabbitmq_ca_cert }}
 [oslo_middleware]
 [oslo_policy]
 policy_dirs = /etc/cinder/policy.d
