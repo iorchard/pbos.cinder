@@ -20,7 +20,7 @@
   run_once: true
   no_log: true
 
-- name: OpenStack | debug create_user_retval
+- name: OpenStack | set fact for cinder project/user id
   ansible.builtin.set_fact:
     cinder_project_id: "{{ create_user_retval.user.default_project_id }}"
     cinder_user_id: "{{ create_user_retval.user.id }}"
