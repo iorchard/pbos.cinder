@@ -7,6 +7,12 @@ enabled_backends = {{ storage_backends | join(',') }}
 default_volume_type = {{ storage_backends[0] }}
 my_ip = {{ ansible_host }}
 transport_url = rabbit://openstack:{{ rabbitmq_openstack_password }}@{{ keepalived_vip }}:{{ rabbitmq_tls_port }}
+{% if "lvm" in storage_backends %}
+allowed_direct_url_schemes = cinder
+image_upload_use_internal_tenant = True
+cinder_internal_tenant_project_id = {{ cinder_project_id }}
+cinder_internal_tenant_user_id = {{ cinder_user_id }}
+{% endif %}
 {% if "ceph" in storage_backends %}
 backup_driver = cinder.backup.drivers.ceph.CephBackupDriver
 backup_ceph_conf = /etc/ceph/ceph.conf
@@ -17,6 +23,15 @@ backup_ceph_stripe_unit = 0
 backup_ceph_stripe_count = 0
 restore_discard_excess_bytes = true
 {% endif %}
+# quota
+quota_volumes = -1
+quota_snapshots = -1
+quota_consistencygroups = -1
+quota_groups = -1
+quota_gigabytes = -1
+quota_backups = -1
+quota_backup_gigabytes = -1
+quota_driver = cinder.quota.DbQuotaDriver
 [backend]
 [backend_defaults]
 [barbican]
@@ -41,6 +56,7 @@ volume_group = {{ lvm_vg_name }}
 volume_backend_name = lvm
 target_protocol = iscsi
 target_helper = lioadm
+image_volume_cache_enabled = True
 {% endif %}
 [cisco_fabric_example]
 [coordination]

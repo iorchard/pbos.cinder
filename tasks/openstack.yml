@@ -15,9 +15,15 @@
     domain: default
     default_project: service
     state: present
+  register: create_user_retval
   delegate_to: "{{ groups['keystone'][0] }}"
   run_once: true
   no_log: true
+
+- name: OpenStack | debug create_user_retval
+  ansible.builtin.set_fact:
+    cinder_project_id: "{{ create_user_retval.user.default_project_id }}"
+    cinder_user_id: "{{ create_user_retval.user.id }}"
 
 - name: OpenStack | add user to admin role
   openstack.cloud.role_assignment:
@@ -64,8 +70,4 @@
   loop: "{{ os_endpoint_interface }}"
   delegate_to: "{{ groups['keystone'][0] }}"
   run_once: true
-
-- name: OpenStack | create volume type
-  ansible.builtin.include_tasks: volume_type.yml
-  loop: "{{ storage_backends }}"
 ...

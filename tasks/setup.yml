@@ -42,4 +42,8 @@
     state: "started"
   become: true
   when: ansible_distribution == "Ubuntu"
+
+- name: OpenStack | create volume type
+  ansible.builtin.include_tasks: volume_type.yml
+  loop: "{{ storage_backends }}"
 ...
