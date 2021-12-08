@@ -48,9 +48,10 @@
     url: "{{ os_service_url }}"
     method: GET
     timeout: 3
-  register: _result
-  delegate_to: "{{ groups['keystone'][0] }}"
+  delegate_to: "{{ groups['cinder'][0] }}"
   run_once: true
+  failed_when: false
+  register: _result
   until: _result.status == 300
   retries: 5
   delay: 5
