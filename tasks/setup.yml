@@ -43,7 +43,19 @@
   become: true
   when: ansible_distribution == "Ubuntu"
 
-- name: OpenStack | create volume type
+- name: Setup | check service is available
+  ansible.builtin.uri:
+    url: "{{ os_service_url }}"
+    method: GET
+    timeout: 3
+  register: _result
+  delegate_to: "{{ groups['keystone'][0] }}"
+  run_once: true
+  until: _result.status == 300
+  retries: 5
+  delay: 5
+
+- name: Setup | create volume type
   ansible.builtin.include_tasks: volume_type.yml
   loop: "{{ storage_backends }}"
 ...
