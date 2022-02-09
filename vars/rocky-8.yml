@@ -25,6 +25,12 @@ os_conf_dir: "/etc/cinder"
 os_service_conf: 
   - {dest: "{{ os_conf_dir }}/cinder.conf"}
 
+lvm_conf:
+  - {dest: "/etc/lvm/lvm.conf"}
+
+pbos_lvm_service:
+  - {dest: "/etc/systemd/system/pbos-lvm.service"}
+
 os_systemd_service_name:
   - openstack-cinder-api.service
   - openstack-cinder-scheduler.service
@@ -33,4 +39,7 @@ os_systemd_service_name:
 
 lvm_systemd_service_name:
   - target.service
+
+pbos_lvm_systemd_service_name:
+  - pbos-lvm.service
 ...

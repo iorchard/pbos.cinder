@@ -1,0 +1,11 @@
+[Unit]
+Description=PBOS LVM loopback service
+Before=openstack-cinder-volume.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/bash -c '_check="$(/sbin/losetup --associated {{ loopback_file }})" && [ "x$_check" = "x" ] && /sbin/losetup --find --show {{ loopback_file }} || exit 0'
+
+[Install]
+WantedBy=multi-user.target

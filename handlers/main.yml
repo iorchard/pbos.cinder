@@ -1,6 +1,6 @@
 ---
 - name: openstack systemctl restart service
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: "restarted"
     enabled: true
@@ -9,11 +9,10 @@
   retries: 3
   delay: 3
   become: true
-  changed_when: false
   loop: "{{ os_systemd_service_name }}"
 
 - name: lvm systemctl restart service
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: "restarted"
     enabled: true
@@ -22,6 +21,13 @@
   retries: 3
   delay: 3
   become: true
-  changed_when: false
   loop: "{{ lvm_systemd_service_name }}"
+
+- name: pbos-lvm systemctl enable service
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    daemon-reload: true
+    enabled: true
+  become: true
+  loop: "{{ pbos_lvm_systemd_service_name }}"
 ...

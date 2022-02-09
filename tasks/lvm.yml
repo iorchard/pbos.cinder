@@ -32,17 +32,29 @@
   become: true
   when: _check.stdout == ""
 
+- name: LVM | template pbos-lvm.service
+  ansible.builtin.template:
+    dest: "{{ item.dest }}"
+    src: "{{ ansible_os_family | lower }}{{ item.dest + '.j2' }}"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  loop: "{{ pbos_lvm_service }}"
+  become: true
+  changed_when: true
+  notify:
+    - pbos-lvm systemctl enable service
+
 - name: LVM | copy lvm configuration
   ansible.builtin.copy:
-    dest: "{{ item }}"
-    src: "{{ ansible_os_family | lower }}{{ item }}"
+    dest: "{{ item.dest }}"
+    src: "{{ ansible_os_family | lower }}{{ item.dest }}"
     owner: "root"
     group: "root"
     mode: "0644"
   become: true
+  loop: "{{ lvm_conf }}"
   changed_when: true
-  loop:
-    - "/etc/lvm/lvm.conf"
   notify:
     - lvm systemctl restart service
 ...
