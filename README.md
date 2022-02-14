@@ -1,7 +1,9 @@
 pbos.cinder
 ==============
 
-Ansible role to install and setup Cinder for OpenStack 
+Ansible role to install and setup Cinder for OpenStack.
+
+Cinder is a volume service for instances.
 
 Requirements
 ------------
@@ -10,7 +12,7 @@ This role requires Ansible 2.11 or higher.
 
 This role supports:
 
-  - Debian 11 (bullseye)
+  - Rocky Linux 8.x
 
 Role Variables
 --------------
