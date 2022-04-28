@@ -19,7 +19,7 @@
     dest: "/etc/ceph/ceph.client.cinder.keyring"
     owner: "{{ os_service_name }}"
     group: "{{ is_nova.changed | ternary('cinder', 'nova') }}"
-    mode: "0640"
+    mode: "0644"
   become: true
 
 - name: Setup | get client.cinder-backup ceph keyring
