@@ -55,7 +55,7 @@
     url: "{{ item.url }}"
     region: RegionOne
     state: present
-  loop: "{{ os_endpoint_interface }}"
+  loop: "{{ os_endpoint_interface_v2 }}"
   delegate_to: "{{ groups['keystone'][0] }}"
   run_once: true
 
