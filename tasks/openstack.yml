@@ -51,8 +51,8 @@
   openstack.cloud.endpoint:
     cloud: pbos
     service: "cinderv2"
-    endpoint_interface: "{{ item }}"
-    url: "http://{{ keepalived_vip }}:{{ cinder_port }}/v2/%(project_id)s"
+    endpoint_interface: "{{ item.name }}"
+    url: "{{ item.url }}"
     region: RegionOne
     state: present
   loop: "{{ os_endpoint_interface }}"
@@ -63,8 +63,8 @@
   openstack.cloud.endpoint:
     cloud: pbos
     service: "cinderv3"
-    endpoint_interface: "{{ item }}"
-    url: "http://{{ keepalived_vip }}:{{ cinder_port }}/v3/%(project_id)s"
+    endpoint_interface: "{{ item.name }}"
+    url: "{{ item.url }}"
     region: RegionOne
     state: present
   loop: "{{ os_endpoint_interface }}"
