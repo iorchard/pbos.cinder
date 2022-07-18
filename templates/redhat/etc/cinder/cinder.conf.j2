@@ -3,6 +3,8 @@ osapi_volume_listen = {{ ansible_host }}
 auth_strategy = keystone
 glance_api_servers = http://{{ keepalived_vip }}:{{ glance_port }}
 glance_api_version = 2
+# The option to fall back to default nova AZ if specified AZ is unavailable.
+allow_availability_zone_fallback = True
 enabled_backends = {{ storage_backends | join(',') }}
 default_volume_type = {{ storage_backends[0] }}
 my_ip = {{ ansible_host }}
