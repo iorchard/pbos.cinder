@@ -15,17 +15,29 @@
         - "{{ ansible_os_family | lower }}.yml"
       paths:
         - "."
+  when: inventory_hostname in groups['cinder']
 
 - name: Main | include lvm storage backends
   ansible.builtin.include_tasks: "lvm.yml"
   when: '"lvm" in storage_backends'
+  when: inventory_hostname in groups['cinder']
 
 - name: Main | include DB tasks
   ansible.builtin.include_tasks: "db.yml"
+  when: inventory_hostname in groups['cinder']
 
 - name: Main | include openstack tasks
   ansible.builtin.include_tasks: "openstack.yml"
+  when: inventory_hostname in groups['cinder']
 
 - name: Main | include setup tasks
   ansible.builtin.include_tasks: "setup.yml"
+  when: inventory_hostname in groups['cinder']
+
+- name: Main | include lightos storage backends
+  ansible.builtin.include_role:
+    name: pbos.lightos
+  when:
+    - inventory_hostname in groups['openstack']
+    - '"lightos" in storage_backends'
 ...
