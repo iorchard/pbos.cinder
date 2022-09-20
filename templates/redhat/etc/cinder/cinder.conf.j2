@@ -1,4 +1,5 @@
 [DEFAULT]
+osapi_volume_workers = {{ cinder_workers }}
 osapi_volume_listen = {{ ansible_host }}
 auth_strategy = keystone
 glance_api_servers = http://{{ keepalived_vip }}:{{ glance_port }}

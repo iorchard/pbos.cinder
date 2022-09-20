@@ -7,6 +7,7 @@ db_password: "{{ cinder_password }}"
 os_password: "{{ cinder_password }}"
 rabbitmq_openstack_password: ~
 cinder_port: 8776
+cinder_workers: 4
 keystone_port: 5000
 glance_port: 9292
 memcached_port: 11211
