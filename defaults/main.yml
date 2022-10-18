@@ -13,10 +13,6 @@ glance_port: 9292
 memcached_port: 11211
 rbd_secret: ~
 os_service_url: "http://{{ keepalived_vip }}:{{ cinder_port }}/"
-os_endpoint_interface_v2:
-  - { name: 'public', url: "http://{{ keepalived_vip_svc | ternary(keepalived_vip_svc, keepalived_vip) }}:{{ cinder_port }}/v2/%(project_id)s" }
-  - { name: 'internal', url: "http://{{ keepalived_vip }}:{{ cinder_port }}/v2/%(project_id)s" }
-  - { name: 'admin', url: "http://{{ keepalived_vip }}:{{ cinder_port }}/v2/%(project_id)s" }
 os_endpoint_interface:
   - { name: 'public', url: "http://{{ keepalived_vip_svc | ternary(keepalived_vip_svc, keepalived_vip) }}:{{ cinder_port }}/v3/%(project_id)s" }
   - { name: 'internal', url: "http://{{ keepalived_vip }}:{{ cinder_port }}/v3/%(project_id)s" }
